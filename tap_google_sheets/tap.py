@@ -38,9 +38,7 @@ class TapGoogleSheets(Tap):
         th.Property(
             "child_sheet_name",
             th.StringType,
-            description=(
-                "Optionally sync data from a different sheet in your Google Sheet"
-            ),
+            description=("Optionally sync data from a different sheet in your Google Sheet"),
             required=False,
         ),
         th.Property(
@@ -97,9 +95,7 @@ class TapGoogleSheets(Tap):
 
         sheets = self.config.get("sheets") or [self.config]
         for stream_config in sheets:
-            stream_name = stream_config.get("output_name") or self.get_sheet_name(
-                stream_config
-            )
+            stream_name = stream_config.get("output_name") or self.get_sheet_name(stream_config)
             stream_name = stream_name.replace(" ", "_")
             key_properties = stream_config.get("key_properties", [])
 
@@ -107,14 +103,12 @@ class TapGoogleSheets(Tap):
 
             stream_schema = self.get_schema(google_sheet_data)
 
-            child_sheet_name = stream_config.get(
-                "child_sheet_name"
-            ) or self.get_first_visible_child_sheet_name(google_sheet_data)
+            child_sheet_name = stream_config.get("child_sheet_name") or self.get_first_visible_child_sheet_name(
+                google_sheet_data
+            )
 
             if stream_name:
-                stream = GoogleSheetsStream(
-                    tap=self, name=stream_name, schema=stream_schema
-                )
+                stream = GoogleSheetsStream(tap=self, name=stream_name, schema=stream_schema)
                 stream.child_sheet_name = child_sheet_name
                 stream.selected
                 stream.primary_keys = key_properties
@@ -129,8 +123,7 @@ class TapGoogleSheets(Tap):
             tap=self,
             name="config",
             schema={"one": "one"},
-            path="https://www.googleapis.com/drive/v2/files/"
-            + stream_config["sheet_id"],
+            path="https://www.googleapis.com/drive/v2/files/" + stream_config["sheet_id"],
         )
 
         prepared_request = config_stream.prepare_request(None, None)
@@ -146,9 +139,7 @@ class TapGoogleSheets(Tap):
         schema = th.PropertiesList()
         for column in headings:
             if column:
-                schema.append(
-                    th.Property(re.sub(r"\s+", "_", column.strip()), th.StringType)
-                )
+                schema.append(th.Property(re.sub(r"\s+", "_", column.strip()), th.StringType))
 
         return schema.to_dict()
 
@@ -208,3 +199,7 @@ class TapGoogleSheets(Tap):
         response: requests.Response = config_stream._request(prepared_request, None)
 
         return response
+
+
+if __name__ == "__main__":
+    TapGoogleSheets.cli()
