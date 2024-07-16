@@ -37,8 +37,9 @@ class GoogleSheetsStream(GoogleSheetsBaseStream):
             A list of selected columns.
         """
         selected_columns = []
+        catalog_metadata = self._tap_input_catalog[self.name].metadata
 
-        for key, metadata in self.metadata.items():
+        for key, metadata in catalog_metadata.items():
             if "properties" not in key:
                 continue
 
