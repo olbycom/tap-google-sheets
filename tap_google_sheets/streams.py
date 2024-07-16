@@ -72,12 +72,4 @@ class GoogleSheetsStream(GoogleSheetsBaseStream):
                 )
             )
 
-        # We have to re apply the streams schema for target-postgres
-        for stream_map in self.stream_maps:
-            if stream_map.stream_alias == self.name:
-                stream_map.transformed_schema = self.schema
-
-        # You have to send another schema message as well for target-postgres
-        self._write_schema_message()
-
         yield from extract_jsonpath(self.records_jsonpath, input=data_rows)
