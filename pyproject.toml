@@ -14,7 +14,6 @@ python = "^3.8"
 requests = "^2.32.3"
 singer-sdk = "^0.38.0"
 
-sqlalchemy = "2.0.32"
 [tool.poetry.dev-dependencies]
 pytest = "^8.2.2"
 tox = "^4.16.0"
