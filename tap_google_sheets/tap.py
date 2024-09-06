@@ -1,6 +1,7 @@
 """google_sheets tap class."""
 
 import re
+from functools import cached_property
 from typing import List
 
 import requests
@@ -10,6 +11,7 @@ from singer_sdk.exceptions import ConfigValidationError
 
 from tap_google_sheets.client import GoogleSheetsBaseStream
 from tap_google_sheets.streams import GoogleSheetsStream
+from tap_google_sheets.utils import get_parsed_sheet_id
 
 
 class TapGoogleSheets(Tap):
@@ -123,7 +125,7 @@ class TapGoogleSheets(Tap):
             tap=self,
             name="config",
             schema={"one": "one"},
-            path="https://www.googleapis.com/drive/v2/files/" + stream_config["sheet_id"],
+            path="https://www.googleapis.com/drive/v2/files/" + get_parsed_sheet_id(stream_config["sheet_id"]),
         )
 
         prepared_request = config_stream.prepare_request(None, None)
@@ -187,7 +189,7 @@ class TapGoogleSheets(Tap):
             name="config",
             schema={"not": "null"},
             path="https://sheets.googleapis.com/v4/spreadsheets/"
-            + stream_config["sheet_id"]
+            + get_parsed_sheet_id(stream_config["sheet_id"])
             + "/values/"
             + stream_config.get("child_sheet_name", "")
             + "!"

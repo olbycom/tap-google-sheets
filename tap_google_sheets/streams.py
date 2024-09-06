@@ -9,6 +9,7 @@ import requests
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 
 from tap_google_sheets.client import GoogleSheetsBaseStream
+from tap_google_sheets.utils import get_parsed_sheet_id
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
@@ -24,7 +25,7 @@ class GoogleSheetsStream(GoogleSheetsBaseStream):
     @property
     def path(self):
         """Set the path for the stream."""
-        path = f"/{self.stream_config['sheet_id']}/values/{self.child_sheet_name}"
+        path = f"/{get_parsed_sheet_id(self.stream_config['sheet_id'])}/values/{self.child_sheet_name}"
         sheet_range = self.stream_config.get("range")
         if sheet_range:
             path += f"!{sheet_range}"
