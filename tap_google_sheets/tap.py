@@ -191,13 +191,14 @@ class TapGoogleSheets(Tap):
             path="https://sheets.googleapis.com/v4/spreadsheets/"
             + get_parsed_sheet_id(stream_config["sheet_id"])
             + "/values/"
+            + "'"
             + stream_config.get("child_sheet_name", "")
+            + "'"
             + "!"
             + self.get_first_line_range(stream_config),
         )
 
         prepared_request = config_stream.prepare_request(None, None)
-
         response: requests.Response = config_stream._request(prepared_request, None)
 
         return response
