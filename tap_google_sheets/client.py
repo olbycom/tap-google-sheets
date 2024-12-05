@@ -5,6 +5,7 @@ from typing import Any, Dict, Optional
 import requests
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
+from slugify import slugify
 
 from tap_google_sheets.auth import (
     GoogleSheetsAuthenticator,
@@ -12,7 +13,7 @@ from tap_google_sheets.auth import (
 )
 
 
-class GoogleSheetsBaseStream(RESTStream):
+class GoogleSheetsClient(RESTStream):
     """google_sheets stream class."""
 
     records_jsonpath = "$[*]"
@@ -84,3 +85,6 @@ class GoogleSheetsBaseStream(RESTStream):
             params["sort"] = "asc"
             params["order_by"] = self.replication_key
         return params
+
+    def _sanitize_column_name(self, column_name: str) -> str:
+        return slugify(text=column_name, separator="_", lowercase=True)

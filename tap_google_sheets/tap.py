@@ -9,7 +9,7 @@ from singer_sdk import Stream, Tap
 from singer_sdk import typing as th
 from slugify import slugify
 
-from tap_google_sheets.client import GoogleSheetsBaseStream
+from tap_google_sheets.client import GoogleSheetsClient
 from tap_google_sheets.streams import GoogleSheetsStream
 from tap_google_sheets.utils import get_parsed_sheet_id
 
@@ -57,11 +57,11 @@ class TapGoogleSheets(Tap):
         return streams
 
     def get_available_tabs(self):
-        config_stream = GoogleSheetsBaseStream(
+        config_stream = GoogleSheetsClient(
             tap=self,
             name="config",
             schema={"one": "one"},
-            path=get_parsed_sheet_id(self.config["sheet_id"]),
+            path=get_parsed_sheet_id(self.config["sheet_link"]),
         )
 
         prepared_request = config_stream.prepare_request(None, None)
@@ -88,11 +88,11 @@ class TapGoogleSheets(Tap):
 
     def get_sheet_data(self, sheet_name):
         """Get the data from the selected or first visible sheet in the google sheet."""
-        config_stream = GoogleSheetsBaseStream(
+        config_stream = GoogleSheetsClient(
             tap=self,
             name="config",
             schema={"not": "null"},
-            path=get_parsed_sheet_id(self.config["sheet_id"]) + "/values/" + "'" + sheet_name + "'",
+            path=get_parsed_sheet_id(self.config["sheet_link"]) + "/values/" + "'" + sheet_name + "'",
         )
 
         prepared_request = config_stream.prepare_request(None, None)
