@@ -2,31 +2,36 @@
 
 import re
 from itertools import zip_longest
-from pathlib import Path
-from typing import Iterable, List
+from typing import Any, Iterable, List
 
 import requests
+from singer_sdk import Tap
+from singer_sdk._singerlib import Schema
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 
 from tap_google_sheets.client import GoogleSheetsBaseStream
 from tap_google_sheets.utils import get_parsed_sheet_id
 
-SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
-
 
 class GoogleSheetsStream(GoogleSheetsBaseStream):
     """Google sheets stream."""
 
-    child_sheet_name = None
-    primary_key = None
-    url_base = "https://sheets.googleapis.com/v4/spreadsheets"
-    stream_config = None
+    def __init__(
+        self,
+        tap: Tap,
+        tab_name: str,
+        name: str | None = None,
+        schema: dict[str, Any] | Schema | None = None,
+        path: str | None = None,
+    ) -> None:
+        self.tab_name = tab_name
+        super().__init__(tap, name, schema, path)
 
     @property
     def path(self):
         """Set the path for the stream."""
-        path = f"/{get_parsed_sheet_id(self.stream_config['sheet_id'])}/values/'{self.child_sheet_name}'"
-        sheet_range = self.stream_config.get("range")
+        path = f"{get_parsed_sheet_id(self.config['sheet_id'])}/values/'{self.tab_name}'"
+        sheet_range = self.config.get("range")
         if sheet_range:
             path += f"!{sheet_range}"
         return path
@@ -37,6 +42,7 @@ class GoogleSheetsStream(GoogleSheetsBaseStream):
         Returns:
             A list of selected columns.
         """
+        return []
         selected_columns = []
         catalog_metadata = self._tap_input_catalog[self.name].metadata
 
