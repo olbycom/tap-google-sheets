@@ -42,7 +42,6 @@ class GoogleSheetsStream(GoogleSheetsBaseStream):
         Returns:
             A list of selected columns.
         """
-        return []
         selected_columns = []
         catalog_metadata = self._tap_input_catalog[self.name].metadata
 
